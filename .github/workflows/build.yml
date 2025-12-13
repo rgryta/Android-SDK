@@ -3,7 +3,7 @@ name: Build Android SDK Sidecar
 on:
   workflow_dispatch:
     inputs:
-      jdk_image:
+      jdk_version:
         description: 'JDK Version'
         required: false
         default: '21'
@@ -25,8 +25,8 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          tags: android-sdk-sidecar:latest
+          tags: android-sdk:latest
           build-args: |
-            JDK_IMAGE=${{ github.event.inputs.jdk_image }}
+            JDK_VERSION=${{ github.event.inputs.jdk_version }}
             SDK_VERSION=${{ github.event.inputs.sdk_version }}
           push: false
