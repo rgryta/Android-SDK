@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       jdk_image:
-        description: 'Base JDK Docker image'
+        description: 'JDK Version'
         required: false
-        default: 'eclipse-temurin:21-jdk-jammy'
+        default: '21'
       sdk_version:
         description: 'Android SDK version'
         required: false
