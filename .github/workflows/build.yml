@@ -1,0 +1,32 @@
+name: Build Android SDK Sidecar
+
+on:
+  workflow_dispatch:
+    inputs:
+      jdk_image:
+        description: 'Base JDK Docker image'
+        required: false
+        default: 'eclipse-temurin:21-jdk-jammy'
+      sdk_version:
+        description: 'Android SDK version'
+        required: false
+        default: '36'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: android-sdk-sidecar:latest
+          build-args: |
+            JDK_IMAGE=${{ github.event.inputs.jdk_image }}
+            SDK_VERSION=${{ github.event.inputs.sdk_version }}
+          push: false
