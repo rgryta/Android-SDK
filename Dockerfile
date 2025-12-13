@@ -19,8 +19,7 @@ RUN set -e; \
     mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest; \
     rm -f /tmp/cmdline-tools.zip
 
-USER root
-RUN chown -R node:node $ANDROID_HOME
+RUN useradd -m -u 1000 node && chown -R node:node $ANDROID_HOME
 USER node
 WORKDIR /home/node
 
