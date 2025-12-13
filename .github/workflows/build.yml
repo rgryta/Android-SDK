@@ -19,14 +19,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        
+      - name: Log in to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
-          tags: android-sdk:latest
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/android-sdk:latest
           build-args: |
             JDK_VERSION=${{ github.event.inputs.jdk_version }}
             SDK_VERSION=${{ github.event.inputs.sdk_version }}
-          push: false
