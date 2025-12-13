@@ -2,8 +2,8 @@ ARG JDK_VERSION=21
 FROM eclipse-temurin:${JDK_VERSION}-jdk-jammy
 
 ARG SDK_VERSION=36
-RUN apt-get update && apt-get install -y --no-install-recommends wget unzip curl git \
-    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y --no-install-recommends wget unzip curl git && rm -rf /var/lib/apt/lists/*
 
 ENV ANDROID_HOME=/opt/android-sdk
 ENV PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
@@ -18,6 +18,11 @@ RUN set -e; \
     unzip -q /tmp/cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools; \
     mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest; \
     rm -f /tmp/cmdline-tools.zip
+
+USER root
+RUN chown -R node:node $ANDROID_HOME
+USER node
+WORKDIR /home/node
 
 RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-${SDK_VERSION}" "build-tools;${SDK_VERSION}.0.0" \
     && yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
