@@ -1,5 +1,5 @@
-ARG JDK_IMAGE=eclipse-temurin:21-jdk-jammy
-FROM ${JDK_IMAGE}
+ARG JDK_VERSION=21
+FROM eclipse-temurin:${JDK_VERSION}-jdk-jammy
 
 ARG SDK_VERSION=36
 RUN apt-get update && apt-get install -y --no-install-recommends wget unzip curl git \
@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget unzip curl
 
 ENV ANDROID_HOME=/opt/android-sdk
 ENV PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
-ENV JAVA_HOME=/usr/lib/jvm/java-21-temurin
 
 RUN mkdir -p $ANDROID_HOME/cmdline-tools
 
