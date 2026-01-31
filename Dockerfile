@@ -5,15 +5,16 @@ ARG SDK_VERSION=36
 # =============================================================================
 # Stage: Download JDK
 # =============================================================================
-FROM eclipse-temurin:${JDK_VERSION}-jdk-alpine AS jdk-builder
+FROM eclipse-temurin:${JDK_VERSION}-jdk-noble AS jdk-builder
 
 # =============================================================================
 # Stage: Download Android SDK
 # =============================================================================
-FROM eclipse-temurin:${JDK_VERSION}-jdk-alpine AS sdk-builder
+FROM eclipse-temurin:${JDK_VERSION}-jdk-noble AS sdk-builder
 ARG SDK_VERSION
 
-RUN apk add --no-cache curl unzip
+RUN apt-get update && apt-get install -y --no-install-recommends curl unzip \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV ANDROID_HOME=/opt/android-sdk
 ENV PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
