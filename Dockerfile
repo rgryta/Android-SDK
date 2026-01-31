@@ -1,4 +1,5 @@
-ARG JDK_VERSION=21
+# Versions managed in .versions file - these are fallback defaults for local builds
+ARG JDK_VERSION=25
 FROM eclipse-temurin:${JDK_VERSION}-jdk-jammy
 
 ARG SDK_VERSION=36
