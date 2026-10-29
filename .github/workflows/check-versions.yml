@@ -37,8 +37,10 @@ jobs:
       - name: Check latest Android SDK version
         id: check-sdk
         run: |
-          LATEST_SDK=$(curl -sL "https://dl.google.com/android/repository/repository2-3.xml" | \
-            grep -oP 'android-\K[0-9]+' | sort -rn | head -1)
+          # Highest API with a final platform (android-N or android-N.0, no -beta/-ext/minor) and its build-tools N.0.0
+          XML=$(curl -sL "https://dl.google.com/android/repository/repository2-3.xml")
+          LATEST_SDK=$(echo "$XML" | grep -oE 'path="platforms;android-[0-9]+(\.0)?"' | sed -E 's/.*android-([0-9]+).*/\1/' | sort -rnu | \
+            while read -r n; do echo "$XML" | grep -qF "path=\"build-tools;${n}.0.0\"" && { echo "$n"; break; }; done)
           echo "latest=${LATEST_SDK}" >> $GITHUB_OUTPUT
           echo "Latest Android SDK: ${LATEST_SDK}"
 
