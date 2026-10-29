@@ -28,9 +28,10 @@ RUN mkdir -p $ANDROID_HOME/cmdline-tools \
     && mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest \
     && rm -f /tmp/cmdline-tools.zip
 
+# Since API 37 platforms carry a minor suffix (android-37.0, 37.1, ...)
 RUN yes | sdkmanager --sdk_root=$ANDROID_HOME \
     "platform-tools" \
-    "platforms;android-${SDK_VERSION}" \
+    "platforms;android-${SDK_VERSION}.0" \
     "build-tools;${SDK_VERSION}.0.0" \
     && yes | sdkmanager --licenses
 
