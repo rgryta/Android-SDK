@@ -36,26 +36,23 @@ RUN yes | sdkmanager --sdk_root=$ANDROID_HOME \
     && yes | sdkmanager --licenses
 
 # =============================================================================
-# Stage: pause binary (static, for scratch)
-# =============================================================================
-FROM alpine:latest AS pause-builder
-RUN apk add --no-cache go \
-    && echo 'package main; import ("os"; "os/signal"); func main() { c := make(chan os.Signal, 1); signal.Notify(c); <-c }' > /pause.go \
-    && CGO_ENABLED=0 go build -ldflags="-s -w" -o /pause /pause.go
-
-# =============================================================================
 # Final minimal image (scratch)
 # =============================================================================
 FROM scratch
 
 # Copy pause binary
-COPY --from=pause-builder /pause /pause
+COPY --from=ghcr.io/rgryta/volume-seed:1.0.0 /pause /pause
+# The payload goes to /seed. On each start, /pause copies it into the target volumes if the
+# payload changed, so a plain `compose up -d` gets the new files (see rgryta/volume-seed).
+# The target dirs must exist and belong to uid 1000, so that uid 1000 can write to a new volume.
+COPY --from=ghcr.io/rgryta/volume-seed:1.0.0 --chown=1000:1000 /empty /opt/java/openjdk
+COPY --from=ghcr.io/rgryta/volume-seed:1.0.0 --chown=1000:1000 /empty /opt/android-sdk
 
 # Copy JDK
-COPY --from=jdk-builder --chown=1000:1000 /opt/java/openjdk /opt/java/openjdk
+COPY --from=jdk-builder --chown=1000:1000 /opt/java/openjdk /seed/opt/java/openjdk
 
 # Copy Android SDK
-COPY --from=sdk-builder --chown=1000:1000 /opt/android-sdk /opt/android-sdk
+COPY --from=sdk-builder --chown=1000:1000 /opt/android-sdk /seed/opt/android-sdk
 
 # Labels
 LABEL org.opencontainers.image.title="Android SDK"
@@ -64,4 +61,4 @@ LABEL org.opencontainers.image.source="https://github.com/rgryta/Android-SDK"
 
 USER 1000:1000
 
-CMD ["/pause"]
+CMD ["/pause", "/opt/java/openjdk", "/opt/android-sdk"]
