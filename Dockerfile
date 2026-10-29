@@ -41,12 +41,12 @@ RUN yes | sdkmanager --sdk_root=$ANDROID_HOME \
 FROM scratch
 
 # Copy pause binary
-COPY --from=ghcr.io/rgryta/volume-seed:1.0.0 /pause /pause
+COPY --from=ghcr.io/rgryta/volume-seed:1.0.1 /pause /pause
 # The payload goes to /seed. On each start, /pause copies it into the target volumes if the
 # payload changed, so a plain `compose up -d` gets the new files (see rgryta/volume-seed).
 # The target dirs must exist and belong to uid 1000, so that uid 1000 can write to a new volume.
-COPY --from=ghcr.io/rgryta/volume-seed:1.0.0 --chown=1000:1000 /empty /opt/java/openjdk
-COPY --from=ghcr.io/rgryta/volume-seed:1.0.0 --chown=1000:1000 /empty /opt/android-sdk
+COPY --from=ghcr.io/rgryta/volume-seed:1.0.1 --chown=1000:1000 /empty /opt/java/openjdk
+COPY --from=ghcr.io/rgryta/volume-seed:1.0.1 --chown=1000:1000 /empty /opt/android-sdk
 
 # Copy JDK
 COPY --from=jdk-builder --chown=1000:1000 /opt/java/openjdk /seed/opt/java/openjdk
